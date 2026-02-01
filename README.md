@@ -71,7 +71,6 @@ docker-compose exec app php artisan key:generate
 # Executar migrações
 docker-compose exec app php artisan migrate
 ```
-```
 
 ### 3. Acessar a aplicação
 
