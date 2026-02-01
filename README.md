@@ -77,20 +77,6 @@ docker-compose exec app php artisan migrate
 
 A API estará disponível em: **http://localhost:8080**
 
-## 📁 Estrutura do Projeto
-
-```
-.
-├── docker/                  # Configurações Docker
-│   ├── nginx/              # Configuração Nginx
-│   ├── supervisor/         # Configuração Supervisor
-│   └── cron/               # Configuração CRON (importação às 3h)
-├── docker-compose.yml       # Orquestração de containers
-├── Dockerfile              # Imagem Docker da aplicação
-├── setup.sh                # Script de instalação
-└── README.md               # Este arquivo
-```
-
 ---
 
 >  This is a challenge by [Coodesh](https://coodesh.com/)
