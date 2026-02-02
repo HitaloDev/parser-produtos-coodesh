@@ -1,4 +1,4 @@
-# Executa a importação de produtos diariamente às 3:00 AM
-0 3 * * * cd /var/www && php artisan products:import >> /var/log/cron.log 2>&1
+# Executa o scheduler do Laravel a cada minuto
+* * * * * cd /var/www && php artisan schedule:run >> /var/log/cron.log 2>&1
 
 # Linha vazia necessária no final do arquivo cron

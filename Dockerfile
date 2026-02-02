@@ -26,6 +26,9 @@ RUN docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd
 # Instalar Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
 
+# Configurar PHP
+COPY ./docker/php/custom.ini /usr/local/etc/php/conf.d/custom.ini
+
 # Obter última versão do Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
