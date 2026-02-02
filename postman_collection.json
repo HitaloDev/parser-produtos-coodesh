@@ -1,0 +1,136 @@
+{
+  "info": {
+    "name": "Fitness Foods API",
+    "description": "Collection for testing Fitness Foods Parser API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "API Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api"]
+        }
+      }
+    },
+    {
+      "name": "List Products",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "fitness_foods_secret_key_2026",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/products?per_page=15",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "products"],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "15"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Product by Code",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "fitness_foods_secret_key_2026",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/products/:code",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "products", ":code"],
+          "variable": [
+            {
+              "key": "code",
+              "value": "3017620422003"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Update Product",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "fitness_foods_secret_key_2026",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"published\",\n  \"product_name\": \"Updated Product Name\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products/:code",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "products", ":code"],
+          "variable": [
+            {
+              "key": "code",
+              "value": "3017620422003"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete Product (Move to Trash)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "fitness_foods_secret_key_2026",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/products/:code",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "products", ":code"],
+          "variable": [
+            {
+              "key": "code",
+              "value": "3017620422003"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

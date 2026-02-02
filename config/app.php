@@ -97,6 +97,8 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
+    'api_key' => env('API_KEY', 'fitness_foods_secret_key_2026'),
+
     'key' => env('APP_KEY'),
 
     'previous_keys' => [
