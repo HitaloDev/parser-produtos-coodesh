@@ -76,6 +76,19 @@ docker-compose exec app php artisan migrate
 
 A API estará disponível em: **http://localhost:8080**
 
+## 🧪 Testando a API
+
+### Postman Collection
+
+Para facilitar os testes, você pode importar a collection do Postman que está na raiz do projeto (`postman_collection.json`):
+
+1. Abra o Postman
+2. Clique em **Import**
+3. Selecione o arquivo `postman_collection.json`
+4. Todas as rotas estarão configuradas e prontas para uso
+
+**API Key padrão:** `fitness_foods_secret_key_2026`
+
 ---
 
 >  This is a challenge by [Coodesh](https://coodesh.com/)
