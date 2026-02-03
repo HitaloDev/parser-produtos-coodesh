@@ -78,6 +78,30 @@ A API estará disponível em: **http://localhost:8080**
 
 ## 🧪 Testando a API
 
+### Testes Automatizados
+
+O projeto inclui testes unitários e de integração para garantir a qualidade do código:
+
+```bash
+# Executar todos os testes
+docker-compose exec app php artisan test
+
+# Executar apenas testes de feature (API)
+docker-compose exec app php artisan test --testsuite=Feature
+
+# Executar apenas testes unitários
+docker-compose exec app php artisan test --testsuite=Unit
+```
+
+**Cobertura de testes:**
+- ✅ Autenticação via API Key
+- ✅ Endpoints GET e PUT
+- ✅ Validação de dados
+- ✅ Paginação
+- ✅ Tratamento de erros
+
+Veja mais detalhes em [`tests/README.md`](./tests/README.md)
+
 ### Postman Collection
 
 Para facilitar os testes, você pode importar a collection do Postman que está na raiz do projeto (`postman_collection.json`):
