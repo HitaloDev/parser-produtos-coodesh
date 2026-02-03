@@ -8,12 +8,17 @@ use App\Models\ImportHistory;
 use App\Models\Product;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\AlertService;
 
 class ProductImportService
 {
     private const INDEX_URL = 'https://challenges.coode.sh/food/data/json/index.txt';
     private const BASE_URL = 'https://challenges.coode.sh/food/data/json/';
     private const PRODUCTS_LIMIT = 100;
+
+    public function __construct(
+        private AlertService $alertService
+    ) {}
 
     public function import(): array
     {
@@ -41,6 +46,10 @@ class ProductImportService
             }
 
             $results['total_products'] = Product::count();
+
+            if ($results['failed_files'] > 0) {
+                $this->alertService->sendBatchImportSummary($results);
+            }
 
             return $results;
         } catch (\Exception $e) {
@@ -104,6 +113,8 @@ class ProductImportService
                 'error_message' => $e->getMessage(),
                 'finished_at' => now(),
             ]);
+
+            $this->alertService->sendImportFailureAlert($importHistory);
 
             throw $e;
         }

@@ -115,4 +115,9 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    'alerts' => [
+        'enabled' => env('MAIL_ALERTS_ENABLED', false),
+        'recipients' => array_filter(explode(',', env('MAIL_ALERTS_RECIPIENTS', ''))),
+    ],
+
 ];

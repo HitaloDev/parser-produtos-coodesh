@@ -58,6 +58,13 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'import_alerts' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/import-alerts.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 14,
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),

@@ -1,6 +1,438 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
-  title: DotNet Challenge 20200902
-  description: CRUD Products
-  version: '0.1'
+  title: Fitness Foods Parser API
+  description: |
+    REST API para gerenciar informações nutricionais de produtos alimentícios do Open Food Facts.
+    
+    Sistema desenvolvido para permitir que a equipe de nutricionistas da Fitness Foods LC 
+    possa revisar rapidamente os dados dos alimentos publicados pela aplicação móvel.
+    
+    ## Autenticação
+    A API utiliza API Key para autenticação. Inclua o header `X-API-Key` em todas as requisições protegidas.
+    
+  version: '1.0.0'
+  contact:
+    name: Fitness Foods LC
+    email: api@fitnessfoodsapi.com
 
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor de desenvolvimento local
+  - url: https://api.fitnessfoodsapi.com/api
+    description: Servidor de produção
+
+tags:
+  - name: System
+    description: Informações do sistema
+  - name: Products
+    description: Gerenciamento de produtos alimentícios
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'API Key para autenticação. Valor padrão em desenvolvimento: fitness_foods_secret_key_2026'
+
+  schemas:
+    Product:
+      type: object
+      properties:
+        code:
+          type: string
+          example: "20221126"
+          description: Código único do produto
+        status:
+          type: string
+          enum: [draft, trash, published]
+          example: draft
+          description: Status do produto
+        imported_t:
+          type: string
+          format: date-time
+          example: "2026-02-02T21:05:30+00:00"
+          description: Data e hora da importação
+        url:
+          type: string
+          format: uri
+          example: "https://world.openfoodfacts.org/product/20221126"
+          nullable: true
+        product_name:
+          type: string
+          example: "Madalenas quadradas"
+          nullable: true
+        quantity:
+          type: string
+          example: "380 g (6 x 2 u.)"
+          nullable: true
+        brands:
+          type: string
+          example: "La Cestera"
+          nullable: true
+        categories:
+          type: string
+          example: "Lanches comida, Lanches doces, Biscoitos e Bolos"
+          nullable: true
+        labels:
+          type: string
+          example: "Contem gluten, Contém derivados de ovos"
+          nullable: true
+        cities:
+          type: string
+          nullable: true
+        purchase_places:
+          type: string
+          example: "Braga,Portugal"
+          nullable: true
+        stores:
+          type: string
+          example: "Lidl"
+          nullable: true
+        ingredients_text:
+          type: string
+          nullable: true
+        traces:
+          type: string
+          nullable: true
+        serving_size:
+          type: string
+          example: "madalena 31.7 g"
+          nullable: true
+        serving_quantity:
+          type: number
+          format: float
+          example: 31.7
+          nullable: true
+        nutriscore_score:
+          type: integer
+          example: 17
+          nullable: true
+        nutriscore_grade:
+          type: string
+          example: "d"
+          maxLength: 1
+          nullable: true
+        main_category:
+          type: string
+          example: "en:madeleines"
+          nullable: true
+        image_url:
+          type: string
+          format: uri
+          nullable: true
+        creator:
+          type: string
+          example: "securita"
+          nullable: true
+        created_t:
+          type: integer
+          example: 1415302075
+          nullable: true
+        last_modified_t:
+          type: integer
+          example: 1572265837
+          nullable: true
+
+    ProductUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [draft, trash, published]
+        product_name:
+          type: string
+        quantity:
+          type: string
+        brands:
+          type: string
+        categories:
+          type: string
+        labels:
+          type: string
+        ingredients_text:
+          type: string
+        serving_size:
+          type: string
+        serving_quantity:
+          type: number
+          format: float
+        nutriscore_score:
+          type: integer
+        nutriscore_grade:
+          type: string
+          maxLength: 1
+        main_category:
+          type: string
+        image_url:
+          type: string
+          format: uri
+
+    PaginatedProducts:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+        links:
+          type: object
+          properties:
+            first:
+              type: string
+              format: uri
+            last:
+              type: string
+              format: uri
+            prev:
+              type: string
+              format: uri
+              nullable: true
+            next:
+              type: string
+              format: uri
+              nullable: true
+        meta:
+          type: object
+          properties:
+            current_page:
+              type: integer
+            from:
+              type: integer
+              nullable: true
+            last_page:
+              type: integer
+            per_page:
+              type: integer
+            to:
+              type: integer
+              nullable: true
+            total:
+              type: integer
+
+    ApiStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          example: "online"
+        database:
+          type: object
+          properties:
+            read:
+              type: boolean
+            write:
+              type: boolean
+        last_cron_execution:
+          type: string
+          example: "2026-02-02T21:05:30+00:00"
+        uptime_seconds:
+          type: integer
+          example: 3600
+        memory_usage:
+          type: object
+          properties:
+            current:
+              type: string
+              example: "128 MB"
+            peak:
+              type: string
+              example: "256 MB"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        errors:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+
+paths:
+  /:
+    get:
+      tags:
+        - System
+      summary: Status da API
+      description: |
+        Retorna informações sobre o status da API, incluindo:
+        - Conexão com banco de dados
+        - Última execução do CRON
+        - Tempo online
+        - Uso de memória
+      responses:
+        '200':
+          description: Status da API
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiStatus'
+
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Listar produtos
+      description: Retorna lista paginada de produtos não deletados (status != trash)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: per_page
+          in: query
+          description: Quantidade de itens por página
+          required: false
+          schema:
+            type: integer
+            default: 15
+            minimum: 1
+            maximum: 100
+        - name: page
+          in: query
+          description: Número da página
+          required: false
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+      responses:
+        '200':
+          description: Lista de produtos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProducts'
+        '401':
+          description: API Key inválida ou ausente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Unauthorized"
+                  message:
+                    type: string
+                    example: "Invalid or missing API Key"
+
+  /products/{code}:
+    get:
+      tags:
+        - Products
+      summary: Obter produto por código
+      description: Retorna informações detalhadas de um produto específico
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Código único do produto
+          schema:
+            type: string
+          example: "20221126"
+      responses:
+        '200':
+          description: Dados do produto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '401':
+          description: API Key inválida ou ausente
+        '404':
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No query results for model [App\\Models\\Product]."
+
+    put:
+      tags:
+        - Products
+      summary: Atualizar produto
+      description: Atualiza informações de um produto existente (recebe dados do Projeto Web)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Código único do produto
+          schema:
+            type: string
+          example: "20221126"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductUpdate'
+            example:
+              status: "published"
+              product_name: "Madalenas quadradas premium"
+              nutriscore_grade: "c"
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Product'
+        '401':
+          description: API Key inválida ou ausente
+        '404':
+          description: Produto não encontrado
+        '422':
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Products
+      summary: Mover produto para lixeira
+      description: Altera o status do produto para 'trash' (exclusão lógica)
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Código único do produto
+          schema:
+            type: string
+          example: "20221126"
+      responses:
+        '200':
+          description: Produto movido para lixeira
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product moved to trash successfully"
+                  code:
+                    type: string
+                    example: "20221126"
+        '401':
+          description: API Key inválida ou ausente
+        '404':
+          description: Produto não encontrado
