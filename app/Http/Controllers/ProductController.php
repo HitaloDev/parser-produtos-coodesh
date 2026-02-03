@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Enums\ProductStatus;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Services\ElasticsearchService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        private ElasticsearchService $elasticsearchService
+    ) {}
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 15);
@@ -55,6 +59,7 @@ class ProductController extends Controller
         ]);
 
         $product->update($validated);
+        $this->elasticsearchService->indexProduct($product->fresh());
 
         return new ProductResource($product);
     }
@@ -63,6 +68,7 @@ class ProductController extends Controller
     {
         $product = Product::where('code', $code)->firstOrFail();
         $product->update(['status' => ProductStatus::TRASH]);
+        $this->elasticsearchService->indexProduct($product->fresh());
 
         return response()->json([
             'message' => 'Product moved to trash successfully',

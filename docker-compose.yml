@@ -55,10 +55,27 @@ services:
     networks:
       - parser-network
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: parser-produtos-elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    networks:
+      - parser-network
+
 networks:
   parser-network:
     driver: bridge
 
 volumes:
   postgres_data:
+    driver: local
+  elasticsearch_data:
     driver: local

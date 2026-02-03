@@ -8,6 +8,7 @@ use App\Models\ImportHistory;
 use App\Models\Product;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Services\ElasticsearchService;
 use App\Services\AlertService;
 
 class ProductImportService
@@ -17,7 +18,8 @@ class ProductImportService
     private const PRODUCTS_LIMIT = 100;
 
     public function __construct(
-        private AlertService $alertService
+        private AlertService $alertService,
+        private ElasticsearchService $elasticsearchService
     ) {}
 
     public function import(): array
@@ -107,6 +109,13 @@ class ProductImportService
                 'failed_products' => $failedCount,
                 'finished_at' => now(),
             ]);
+
+            if ($importedCount > 0) {
+                $recentProducts = Product::orderBy('imported_t', 'desc')
+                    ->limit($importedCount)
+                    ->get();
+                $this->elasticsearchService->bulkIndex($recentProducts->all());
+            }
         } catch (\Exception $e) {
             $importHistory->update([
                 'status' => ImportStatus::FAILED,
