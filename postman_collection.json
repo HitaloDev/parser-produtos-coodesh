@@ -20,6 +20,40 @@
       }
     },
     {
+      "name": "Search Products",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "fitness_foods_secret_key_2026",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/products/search?q=chocolate&per_page=15&page=1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "products", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "chocolate"
+            },
+            {
+              "key": "per_page",
+              "value": "15"
+            },
+            {
+              "key": "page",
+              "value": "1"
+            }
+          ]
+        }
+      }
+    },
+    {
       "name": "List Products",
       "request": {
         "method": "GET",

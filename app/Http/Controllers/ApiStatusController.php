@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ElasticsearchService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
 class ApiStatusController extends Controller
 {
+    public function __construct(
+        private ElasticsearchService $elasticsearchService
+    ) {}
+
     public function index()
     {
         $dbConnection = $this->checkDatabaseConnection();
+        $esHealth = $this->elasticsearchService->healthCheck();
 
         try {
             $lastCronExecution = Cache::get('last_cron_execution', 'Never executed');
@@ -22,6 +28,10 @@ class ApiStatusController extends Controller
             'database' => [
                 'read' => $dbConnection,
                 'write' => $dbConnection,
+            ],
+            'elasticsearch' => [
+                'available' => $esHealth['available'],
+                'status' => $esHealth['status'],
             ],
             'last_cron_execution' => $lastCronExecution,
             'uptime_seconds' => defined('LARAVEL_START') ? (int) ((microtime(true) - LARAVEL_START)) : 0,

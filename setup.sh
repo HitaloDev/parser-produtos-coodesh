@@ -23,6 +23,9 @@ docker-compose run --rm app php artisan key:generate
 echo "🗄️  Executando migrações do banco de dados..."
 docker-compose run --rm app php artisan migrate --force
 
+echo "🔍 Configurando Elasticsearch..."
+docker-compose run --rm app php artisan elasticsearch:setup
+
 echo "🔧 Ajustando permissões finais..."
 docker-compose run --rm app chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 docker-compose run --rm app chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
